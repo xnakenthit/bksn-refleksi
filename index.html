@@ -11,11 +11,18 @@
 </head>
 <body class="bg-slate-900 text-white min-h-screen font-sans flex flex-col items-center justify-center p-4">
 
-  <!-- KONFIGURASI SUPABASE (GANTI DENGAN KREDENSIAL PROYEK BKSN KATA BERANTAI ANDA) -->
+  <!-- KONFIGURASI SUPABASE (PASTIKAN DIGANTI DENGAN KUNCI ASLI ANDA) -->
   <script>
     const SUPABASE_URL = "https://fltqdmqpqmwgtpjcnxna.supabase.co/rest/v1/";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZsdHFkbXFwcW13Z3RwamNueG5hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk4MzA2MTMsImV4cCI6MjEwNTQwNjYxM30.7GXCMlMyucZ_L1NfvFcpltpUXkSpUDFocAXCnaBvt3I";
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    
+    // Inisialisasi Supabase Client
+    let supabaseClient = null;
+    try {
+      supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    } catch (e) {
+      console.error("Gagal inisialisasi Supabase:", e);
+    }
   </script>
 
   <!-- CARD UTAMA FORMULIR -->
@@ -49,27 +56,27 @@
         <label class="block text-xs font-bold text-amber-400 uppercase mb-2">Pilih Nomor Kelompok Anda:</label>
         <div class="space-y-2.5">
           <button type="button" onclick="selectGroup(1, 'Keluarga')" id="btn-1" class="group-btn w-full p-3 bg-slate-700 hover:bg-amber-500 hover:text-slate-950 rounded-xl border border-slate-600 transition flex items-center justify-between text-left">
-            <span class="font-black text-lg bg-slate-800 text-amber-400 px-3 py-1 rounded-lg border border-slate-600 group-btn-num">1</span>
+            <span class="font-black text-lg bg-slate-800 text-amber-400 px-3 py-1 rounded-lg border border-slate-600">1</span>
             <span class="font-bold text-sm ml-3 flex-1">Dalam Keluarga</span>
-            <span class="text-xs text-slate-400 group-btn-sub">Klik</span>
+            <span class="text-xs text-slate-400">Pilih</span>
           </button>
 
           <button type="button" onclick="selectGroup(2, 'Lingkungan')" id="btn-2" class="group-btn w-full p-3 bg-slate-700 hover:bg-amber-500 hover:text-slate-950 rounded-xl border border-slate-600 transition flex items-center justify-between text-left">
-            <span class="font-black text-lg bg-slate-800 text-amber-400 px-3 py-1 rounded-lg border border-slate-600 group-btn-num">2</span>
+            <span class="font-black text-lg bg-slate-800 text-amber-400 px-3 py-1 rounded-lg border border-slate-600">2</span>
             <span class="font-bold text-sm ml-3 flex-1">Dalam Lingkungan</span>
-            <span class="text-xs text-slate-400 group-btn-sub">Klik</span>
+            <span class="text-xs text-slate-400">Pilih</span>
           </button>
 
           <button type="button" onclick="selectGroup(3, 'Paroki')" id="btn-3" class="group-btn w-full p-3 bg-slate-700 hover:bg-amber-500 hover:text-slate-950 rounded-xl border border-slate-600 transition flex items-center justify-between text-left">
-            <span class="font-black text-lg bg-slate-800 text-amber-400 px-3 py-1 rounded-lg border border-slate-600 group-btn-num">3</span>
+            <span class="font-black text-lg bg-slate-800 text-amber-400 px-3 py-1 rounded-lg border border-slate-600">3</span>
             <span class="font-bold text-sm ml-3 flex-1">Dalam Paroki</span>
-            <span class="text-xs text-slate-400 group-btn-sub">Klik</span>
+            <span class="text-xs text-slate-400">Pilih</span>
           </button>
 
           <button type="button" onclick="selectGroup(4, 'Masyarakat')" id="btn-4" class="group-btn w-full p-3 bg-slate-700 hover:bg-amber-500 hover:text-slate-950 rounded-xl border border-slate-600 transition flex items-center justify-between text-left">
-            <span class="font-black text-lg bg-slate-800 text-amber-400 px-3 py-1 rounded-lg border border-slate-600 group-btn-num">4</span>
+            <span class="font-black text-lg bg-slate-800 text-amber-400 px-3 py-1 rounded-lg border border-slate-600">4</span>
             <span class="font-bold text-sm ml-3 flex-1">Dalam Masyarakat</span>
-            <span class="text-xs text-slate-400 group-btn-sub">Klik</span>
+            <span class="text-xs text-slate-400">Pilih</span>
           </button>
         </div>
       </div>
@@ -118,7 +125,7 @@
       selectedGroupNo = no;
       selectedLocus = locus;
 
-      // Reset style semua tombol vertikal
+      // Reset style tombol
       document.querySelectorAll('.group-btn').forEach(btn => {
         btn.classList.remove('bg-amber-500', 'text-slate-950');
         btn.classList.add('bg-slate-700', 'text-white');
@@ -145,34 +152,47 @@
         return;
       }
 
+      if (SUPABASE_URL.includes("PASANG_PROJECT_URL") || SUPABASE_KEY.includes("PASANG_API_KEY")) {
+        alert("Peringatan: URL atau API Key Supabase belum diganti di file index.html!");
+        return;
+      }
+
       btn.disabled = true;
       btn.innerText = 'Mengirim...';
 
-      const { error } = await supabase.from('refleksi_bksn_halaman36').insert([
-        {
-          nama_umat: nama,
-          lingkungan: 'St. Sisilia',
-          kelompok_no: selectedGroupNo,
-          locus_kategori: selectedLocus,
-          isi_refleksi: refleksi
-        }
-      ]);
+      try {
+        const { error } = await supabaseClient.from('refleksi_bksn_halaman36').insert([
+          {
+            nama_umat: nama,
+            lingkungan: 'St. Sisilia',
+            kelompok_no: selectedGroupNo,
+            locus_kategori: selectedLocus,
+            isi_refleksi: refleksi
+          }
+        ]);
 
-      if (error) {
-        alert('Gagal mengirim data. Coba periksa koneksi Anda.');
+        if (error) {
+          alert('Gagal mengirim data: ' + error.message);
+          btn.disabled = false;
+          btn.innerText = 'KIRIM REFLEKSI SAYA';
+        } else {
+          // Sembunyikan form dan tampilkan ucapan terima kasih
+          document.getElementById('mainCard').classList.add('hidden');
+          document.getElementById('thankYouCard').classList.remove('hidden');
+
+          // Mainkan Animasi Confetti
+          if (typeof confetti === 'function') {
+            confetti({
+              particleCount: 120,
+              spread: 80,
+              origin: { y: 0.6 }
+            });
+          }
+        }
+      } catch (err) {
+        alert('Terjadi kesalahan sistem: ' + err.message);
         btn.disabled = false;
         btn.innerText = 'KIRIM REFLEKSI SAYA';
-      } else {
-        // Sembunyikan form dan tampilkan ucapan terima kasih
-        document.getElementById('mainCard').classList.add('hidden');
-        document.getElementById('thankYouCard').classList.remove('hidden');
-
-        // Mainkan Animasi Confetti
-        confetti({
-          particleCount: 120,
-          spread: 80,
-          origin: { y: 0.6 }
-        });
       }
     }
 
