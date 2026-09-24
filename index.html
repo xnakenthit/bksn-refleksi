@@ -6,26 +6,26 @@
   <title>Refleksi BKSN 2026 — Lingkungan St. Sisilia</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <!-- Library Confetti -->
+  <!-- Library Confetti untuk efek selebrasi -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 </head>
 <body class="bg-slate-900 text-white min-h-screen font-sans flex flex-col items-center justify-center p-4">
 
-  <!-- KONFIGURASI SUPABASE (PASTIKAN DIGANTI DENGAN KUNCI ASLI ANDA) -->
+  <!-- KONFIGURASI SUPABASE KLIEN -->
   <script>
-    const SUPABASE_URL = "https://fltqdmqpqmwgtpjcnxna.supabase.co/rest/v1/";
+    // URL dibersihkan dari path /rest/v1/ agar tidak bentrok
+    const SUPABASE_URL = "https://fltqdmqpqmwgtpjcnxna.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZsdHFkbXFwcW13Z3RwamNueG5hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk4MzA2MTMsImV4cCI6MjEwNTQwNjYxM30.7GXCMlMyucZ_L1NfvFcpltpUXkSpUDFocAXCnaBvt3I";
     
-    // Inisialisasi Supabase Client
     let supabaseClient = null;
     try {
       supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     } catch (e) {
-      console.error("Gagal inisialisasi Supabase:", e);
+      console.error("Inisialisasi Supabase Gagal:", e);
     }
   </script>
 
-  <!-- CARD UTAMA FORMULIR -->
+  <!-- CARD UTAMA FORMULIR REFLEKSI -->
   <div id="mainCard" class="w-full max-w-md bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl my-6">
     <header class="text-center mb-6">
       <p class="text-amber-400 font-bold text-xs uppercase tracking-widest mb-1">Lingkungan St. Sisilia</p>
@@ -43,7 +43,7 @@
       </div>
     </header>
 
-    <!-- FORM INPUT -->
+    <!-- FORM INPUT UMAT -->
     <div id="formSection">
       <!-- INPUT NAMA / INISIAL -->
       <div class="mb-5">
@@ -51,7 +51,7 @@
         <input type="text" id="namaUmat" class="w-full p-3 bg-slate-900 border border-slate-700 rounded-xl text-sm focus:outline-none focus:border-amber-400" placeholder="Contoh: Pak Budi / Anonim">
       </div>
 
-      <!-- PILIHAN NOMOR BERHITUNG (1 - 4) SUSUNAN VERTIKAL DENGAN LOCUS -->
+      <!-- PILIHAN NOMOR BERHITUNG (1 - 4) SUSUNAN VERTIKAL -->
       <div class="mb-5">
         <label class="block text-xs font-bold text-amber-400 uppercase mb-2">Pilih Nomor Kelompok Anda:</label>
         <div class="space-y-2.5">
@@ -81,7 +81,7 @@
         </div>
       </div>
 
-      <!-- INPUT REFLEKSI KHUSUS -->
+      <!-- INPUT REFLEKSI KHUSUS NOMOR TERPILIH -->
       <div id="refleksiInputArea" class="hidden space-y-4 pt-2">
         <div class="bg-amber-950/40 border border-amber-500/40 p-3 rounded-xl text-xs text-amber-200">
           📌 <strong>Kelompok <span id="labelNo"></span>:</strong> Tuliskan contoh sikap/kebiasaan yang saling menyejahterakan dalam <strong id="labelLocus" class="underline"></strong>.
@@ -99,7 +99,7 @@
     </div>
   </div>
 
-  <!-- HALAMAN UCAPAN TERIMA KASIH -->
+  <!-- HALAMAN UCAPAN TERIMA KASIH (DENGAN EFEK CONFETTI) -->
   <div id="thankYouCard" class="hidden w-full max-w-md bg-slate-800 p-8 rounded-2xl border border-amber-500/50 shadow-2xl my-6 text-center">
     <div class="w-16 h-16 bg-amber-500/20 text-amber-400 rounded-full flex items-center justify-center mx-auto mb-4 border border-amber-500/40 text-3xl">
       🙏
@@ -125,18 +125,18 @@
       selectedGroupNo = no;
       selectedLocus = locus;
 
-      // Reset style tombol
+      // Reset tampilan tombol
       document.querySelectorAll('.group-btn').forEach(btn => {
         btn.classList.remove('bg-amber-500', 'text-slate-950');
         btn.classList.add('bg-slate-700', 'text-white');
       });
 
-      // Highlight tombol terpilih
+      // Sorot tombol yang dipilih
       const selectedBtn = document.getElementById(`btn-${no}`);
       selectedBtn.classList.remove('bg-slate-700', 'text-white');
       selectedBtn.classList.add('bg-amber-500', 'text-slate-950');
 
-      // Tampilkan area isi refleksi
+      // Tampilkan area form input
       document.getElementById('labelNo').innerText = no;
       document.getElementById('labelLocus').innerText = `Dalam ${locus}`;
       document.getElementById('refleksiInputArea').classList.remove('hidden');
@@ -149,11 +149,6 @@
 
       if (!refleksi.trim()) {
         alert('Mohon isi kolom refleksi terlebih dahulu!');
-        return;
-      }
-
-      if (SUPABASE_URL.includes("PASANG_PROJECT_URL") || SUPABASE_KEY.includes("PASANG_API_KEY")) {
-        alert("Peringatan: URL atau API Key Supabase belum diganti di file index.html!");
         return;
       }
 
@@ -176,11 +171,11 @@
           btn.disabled = false;
           btn.innerText = 'KIRIM REFLEKSI SAYA';
         } else {
-          // Sembunyikan form dan tampilkan ucapan terima kasih
+          // Sembunyikan form dan munculkan ucapan terima kasih
           document.getElementById('mainCard').classList.add('hidden');
           document.getElementById('thankYouCard').classList.remove('hidden');
 
-          // Mainkan Animasi Confetti
+          // Tampilkan animasi kembang api kertas (confetti)
           if (typeof confetti === 'function') {
             confetti({
               particleCount: 120,
