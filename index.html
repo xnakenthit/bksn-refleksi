@@ -1,1 +1,125 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Refleksi Halaman 36 — BKSN 2026</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-slate-900 text-white min-h-screen font-sans flex flex-col items-center p-4">
 
+  <!-- KONFIGURASI SUPABASE (GANTI SESUAI DATA PROYEK ANDA) -->
+  <script>
+    const SUPABASE_URL = "URL_PROJECT_SUPABASE_ANDA";
+    const SUPABASE_KEY = "API_KEY_ANON_SUPABASE_ANDA";
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  </script>
+
+  <div class="w-full max-w-md bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl my-6">
+    <header class="text-center mb-6">
+      <p class="text-amber-400 font-bold text-xs uppercase tracking-widest mb-1">BKSN 2026 — Dewasa</p>
+      <h1 class="text-xl font-extrabold text-white">Refleksi Halaman 36</h1>
+      <p class="text-xs text-slate-400 mt-1">Kebiasaan Berbagi yang Saling Menyejahterakan</p>
+    </header>
+
+    <!-- IDENTITAS DIRI (OPSIONAL) -->
+    <div class="space-y-3 mb-6">
+      <div>
+        <label class="block text-xs font-semibold text-slate-300 mb-1">Nama / Inisial (Boleh Anonim)</label>
+        <input type="text" id="namaUmat" class="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-sm focus:outline-none focus:border-amber-400" placeholder="Contoh: Pak Budi / Anonim">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-300 mb-1">Nama Lingkungan</label>
+        <input type="text" id="namaLingkungan" class="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-sm focus:outline-none focus:border-amber-400" placeholder="Contoh: St. Sisilia">
+      </div>
+    </div>
+
+    <!-- PILIHAN NOMOR BERHITUNG (1 - 4) -->
+    <div class="mb-6">
+      <label class="block text-xs font-bold text-amber-400 uppercase mb-2">Pilih Nomor Berhitung Anda:</label>
+      <div class="grid grid-cols-4 gap-2">
+        <button type="button" onclick="selectGroup(1, 'Keluarga')" id="btn-1" class="group-btn p-3 bg-slate-700 hover:bg-amber-500 hover:text-slate-950 font-black rounded-xl text-lg border border-slate-600 transition text-center">1</button>
+        <button type="button" onclick="selectGroup(2, 'Lingkungan')" id="btn-2" class="group-btn p-3 bg-slate-700 hover:bg-amber-500 hover:text-slate-950 font-black rounded-xl text-lg border border-slate-600 transition text-center">2</button>
+        <button type="button" onclick="selectGroup(3, 'Paroki')" id="btn-3" class="group-btn p-3 bg-slate-700 hover:bg-amber-500 hover:text-slate-950 font-black rounded-xl text-lg border border-slate-600 transition text-center">3</button>
+        <button type="button" onclick="selectGroup(4, 'Masyarakat')" id="btn-4" class="group-btn p-3 bg-slate-700 hover:bg-amber-500 hover:text-slate-950 font-black rounded-xl text-lg border border-slate-600 transition text-center">4</button>
+      </div>
+    </div>
+
+    <!-- FORM DYNAMIC (MUNCUL SESUAI PILIHAN NOMOR) -->
+    <div id="formSection" class="hidden space-y-4">
+      <div class="bg-amber-950/40 border border-amber-500/40 p-3 rounded-xl text-xs text-amber-200">
+        📌 <strong>Tugas Kelompok <span id="labelNo"></span>:</strong> Mengisi contoh sikap/kebiasaan yang saling menyejahterakan dalam <strong id="labelLocus" class="underline"></strong>.
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-slate-200 mb-1">Tuliskan Refleksi / Kebiasaan Anda:</label>
+        <textarea id="isiRefleksi" rows="4" class="w-full p-3 bg-slate-900 border border-slate-700 rounded-xl text-sm focus:outline-none focus:border-amber-400" placeholder="Ketik jawaban Anda di sini..."></textarea>
+      </div>
+
+      <button type="button" onclick="submitRefleksi()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3 rounded-xl transition shadow-lg shadow-amber-500/20">
+        KIRIM REFLEKSI SAYA
+      </button>
+    </div>
+
+    <p id="statusMsg" class="mt-4 text-center text-sm font-semibold text-emerald-400 hidden">
+      ✓ Refleksi Anda berhasil terkirim! Berkah Dalem.
+    </p>
+  </div>
+
+  <script>
+    let selectedGroupNo = null;
+    let selectedLocus = "";
+
+    function selectGroup(no, locus) {
+      selectedGroupNo = no;
+      selectedLocus = locus;
+
+      // Reset style tombol
+      document.querySelectorAll('.group-btn').forEach(btn => {
+        btn.classList.remove('bg-amber-500', 'text-slate-950');
+        btn.classList.add('bg-slate-700', 'text-white');
+      });
+
+      // Highlight tombol terpilih
+      const selectedBtn = document.getElementById(`btn-${no}`);
+      selectedBtn.classList.remove('bg-slate-700', 'text-white');
+      selectedBtn.classList.add('bg-amber-500', 'text-slate-950');
+
+      // Tampilkan form khusus
+      document.getElementById('labelNo').innerText = no;
+      document.getElementById('labelLocus').innerText = `Komunitas / Locus ${locus}`;
+      document.getElementById('formSection').classList.remove('hidden');
+      document.getElementById('statusMsg').classList.add('hidden');
+    }
+
+    async function submitRefleksi() {
+      const nama = document.getElementById('namaUmat').value || 'Anonim';
+      const lingkungan = document.getElementById('namaLingkungan').value || '-';
+      const refleksi = document.getElementById('isiRefleksi').value;
+
+      if (!refleksi.trim()) {
+        alert('Mohon isi kolom refleksi terlebih dahulu!');
+        return;
+      }
+
+      const { error } = await supabase.from('refleksi_bksn_halaman36').insert([
+        {
+          nama_umat: nama,
+          lingkungan: lingkungan,
+          kelompok_no: selectedGroupNo,
+          locus_kategori: selectedLocus,
+          isi_refleksi: refleksi
+        }
+      ]);
+
+      if (error) {
+        alert('Gagal mengirim data. Coba periksa koneksi Anda.');
+      } else {
+        document.getElementById('statusMsg').classList.remove('hidden');
+        document.getElementById('isiRefleksi').value = '';
+      }
+    }
+  </script>
+</body>
+</html>
