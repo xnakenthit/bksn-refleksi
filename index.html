@@ -11,7 +11,7 @@
 </head>
 <body class="bg-slate-900 text-white min-h-screen font-sans flex flex-col items-center justify-center p-4">
 
-  <!-- KONFIGURASI SUPABASE (GANTI SESUAI DATA PROYEK BKSN KATA BERANTAI ANDA) -->
+  <!-- KONFIGURASI SUPABASE (GANTI DENGAN KREDENSIAL PROYEK BKSN KATA BERANTAI ANDA) -->
   <script>
     const SUPABASE_URL = "URL_PROJECT_SUPABASE_ANDA";
     const SUPABASE_KEY = "API_KEY_ANON_SUPABASE_ANDA";
@@ -23,7 +23,17 @@
     <header class="text-center mb-6">
       <p class="text-amber-400 font-bold text-xs uppercase tracking-widest mb-1">Lingkungan St. Sisilia</p>
       <h1 class="text-xl font-extrabold text-white">Refleksi BKSN 2026</h1>
-      <p class="text-xs text-slate-400 mt-1">Halaman 36 — Kebiasaan Berbagi yang Menyejahterakan</p>
+      <p class="text-xs text-slate-400 mt-1">Halaman 36</p>
+      
+      <!-- PERTANYAAN UTAMA & PETUNJUK -->
+      <div class="mt-4 bg-slate-900/80 p-3 rounded-xl border border-amber-500/30">
+        <h2 class="text-amber-400 font-extrabold text-xs uppercase tracking-wide">
+          CONTOH KEBIASAAN BERBAGI YANG SALING MENYEJAHTERAKAN
+        </h2>
+        <p class="text-xs text-slate-300 mt-2 italic">
+          Silakan pilih nomor di bawah ini sesuai dengan nomor urut Anda saat berhitung!
+        </p>
+      </div>
     </header>
 
     <!-- FORM INPUT -->
@@ -34,19 +44,38 @@
         <input type="text" id="namaUmat" class="w-full p-3 bg-slate-900 border border-slate-700 rounded-xl text-sm focus:outline-none focus:border-amber-400" placeholder="Contoh: Pak Budi / Anonim">
       </div>
 
-      <!-- PILIHAN NOMOR BERHITUNG (1 - 4) -->
+      <!-- PILIHAN NOMOR BERHITUNG (1 - 4) SUSUNAN VERTIKAL DENGAN LOCUS -->
       <div class="mb-5">
-        <label class="block text-xs font-bold text-amber-400 uppercase mb-2">Pilih Nomor Berhitung Anda:</label>
-        <div class="grid grid-cols-4 gap-2">
-          <button type="button" onclick="selectGroup(1, 'Keluarga')" id="btn-1" class="group-btn p-3 bg-slate-700 hover:bg-amber-500 hover:text-slate-950 font-black rounded-xl text-lg border border-slate-600 transition text-center">1</button>
-          <button type="button" onclick="selectGroup(2, 'Lingkungan')" id="btn-2" class="group-btn p-3 bg-slate-700 hover:bg-amber-500 hover:text-slate-950 font-black rounded-xl text-lg border border-slate-600 transition text-center">2</button>
-          <button type="button" onclick="selectGroup(3, 'Paroki')" id="btn-3" class="group-btn p-3 bg-slate-700 hover:bg-amber-500 hover:text-slate-950 font-black rounded-xl text-lg border border-slate-600 transition text-center">3</button>
-          <button type="button" onclick="selectGroup(4, 'Masyarakat')" id="btn-4" class="group-btn p-3 bg-slate-700 hover:bg-amber-500 hover:text-slate-950 font-black rounded-xl text-lg border border-slate-600 transition text-center">4</button>
+        <label class="block text-xs font-bold text-amber-400 uppercase mb-2">Pilih Nomor Kelompok Anda:</label>
+        <div class="space-y-2.5">
+          <button type="button" onclick="selectGroup(1, 'Keluarga')" id="btn-1" class="group-btn w-full p-3 bg-slate-700 hover:bg-amber-500 hover:text-slate-950 rounded-xl border border-slate-600 transition flex items-center justify-between text-left">
+            <span class="font-black text-lg bg-slate-800 text-amber-400 px-3 py-1 rounded-lg border border-slate-600 group-btn-num">1</span>
+            <span class="font-bold text-sm ml-3 flex-1">Dalam Keluarga</span>
+            <span class="text-xs text-slate-400 group-btn-sub">Klik</span>
+          </button>
+
+          <button type="button" onclick="selectGroup(2, 'Lingkungan')" id="btn-2" class="group-btn w-full p-3 bg-slate-700 hover:bg-amber-500 hover:text-slate-950 rounded-xl border border-slate-600 transition flex items-center justify-between text-left">
+            <span class="font-black text-lg bg-slate-800 text-amber-400 px-3 py-1 rounded-lg border border-slate-600 group-btn-num">2</span>
+            <span class="font-bold text-sm ml-3 flex-1">Dalam Lingkungan</span>
+            <span class="text-xs text-slate-400 group-btn-sub">Klik</span>
+          </button>
+
+          <button type="button" onclick="selectGroup(3, 'Paroki')" id="btn-3" class="group-btn w-full p-3 bg-slate-700 hover:bg-amber-500 hover:text-slate-950 rounded-xl border border-slate-600 transition flex items-center justify-between text-left">
+            <span class="font-black text-lg bg-slate-800 text-amber-400 px-3 py-1 rounded-lg border border-slate-600 group-btn-num">3</span>
+            <span class="font-bold text-sm ml-3 flex-1">Dalam Paroki</span>
+            <span class="text-xs text-slate-400 group-btn-sub">Klik</span>
+          </button>
+
+          <button type="button" onclick="selectGroup(4, 'Masyarakat')" id="btn-4" class="group-btn w-full p-3 bg-slate-700 hover:bg-amber-500 hover:text-slate-950 rounded-xl border border-slate-600 transition flex items-center justify-between text-left">
+            <span class="font-black text-lg bg-slate-800 text-amber-400 px-3 py-1 rounded-lg border border-slate-600 group-btn-num">4</span>
+            <span class="font-bold text-sm ml-3 flex-1">Dalam Masyarakat</span>
+            <span class="text-xs text-slate-400 group-btn-sub">Klik</span>
+          </button>
         </div>
       </div>
 
       <!-- INPUT REFLEKSI KHUSUS -->
-      <div id="refleksiInputArea" class="hidden space-y-4">
+      <div id="refleksiInputArea" class="hidden space-y-4 pt-2">
         <div class="bg-amber-950/40 border border-amber-500/40 p-3 rounded-xl text-xs text-amber-200">
           📌 <strong>Kelompok <span id="labelNo"></span>:</strong> Tuliskan contoh sikap/kebiasaan yang saling menyejahterakan dalam <strong id="labelLocus" class="underline"></strong>.
         </div>
@@ -63,7 +92,7 @@
     </div>
   </div>
 
-  <!-- HALAMAN UCAPAN TERIMA KASIH (DISEMBUNYIKAN AWALNYA) -->
+  <!-- HALAMAN UCAPAN TERIMA KASIH -->
   <div id="thankYouCard" class="hidden w-full max-w-md bg-slate-800 p-8 rounded-2xl border border-amber-500/50 shadow-2xl my-6 text-center">
     <div class="w-16 h-16 bg-amber-500/20 text-amber-400 rounded-full flex items-center justify-center mx-auto mb-4 border border-amber-500/40 text-3xl">
       🙏
@@ -89,7 +118,7 @@
       selectedGroupNo = no;
       selectedLocus = locus;
 
-      // Reset tombol
+      // Reset style semua tombol vertikal
       document.querySelectorAll('.group-btn').forEach(btn => {
         btn.classList.remove('bg-amber-500', 'text-slate-950');
         btn.classList.add('bg-slate-700', 'text-white');
@@ -102,7 +131,7 @@
 
       // Tampilkan area isi refleksi
       document.getElementById('labelNo').innerText = no;
-      document.getElementById('labelLocus').innerText = `Locus ${locus}`;
+      document.getElementById('labelLocus').innerText = `Dalam ${locus}`;
       document.getElementById('refleksiInputArea').classList.remove('hidden');
     }
 
@@ -138,7 +167,7 @@
         document.getElementById('mainCard').classList.add('hidden');
         document.getElementById('thankYouCard').classList.remove('hidden');
 
-        // Mainkan Animasi Confetti / Hiasan Pesta Kertas
+        // Mainkan Animasi Confetti
         confetti({
           particleCount: 120,
           spread: 80,
