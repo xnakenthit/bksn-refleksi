@@ -27,7 +27,7 @@
     }
   </script>
 
-  <!-- CARD UTAMA FORMULIR REFLEKSI -->
+  <!-- CARD UTAMA FORMULIR REFLEKSI UMAT -->
   <div id="mainCard" class="w-full max-w-md bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl my-6 relative">
     
     <!-- TOMBOL MENU ADMIN DI POJOK KANAN ATAS -->
@@ -122,44 +122,103 @@
     </button>
   </div>
 
-  <!-- MODAL ADMIN -->
-  <div id="adminModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-    <div class="bg-slate-800 w-full max-w-md p-6 rounded-2xl border border-amber-500/40 shadow-2xl relative">
-      <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white font-bold text-lg">&times;</button>
+  <!-- MODAL ADMIN & PREVIEW HASIL -->
+  <div id="adminModal" class="fixed inset-0 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4 z-50 overflow-y-auto">
+    <div id="adminModalBox" class="bg-slate-800 w-full max-w-md p-6 rounded-2xl border border-amber-500/40 shadow-2xl relative transition-all duration-300 my-auto">
+      <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white font-bold text-xl z-10">&times;</button>
       
       <h3 class="text-lg font-black text-amber-400 mb-4 flex items-center gap-2">🔑 Panel Admin Refleksi</h3>
 
       <!-- MODAL STATE 1: FORM LOGIN PASSWORD -->
       <div id="adminLoginForm">
-        <p class="text-xs text-slate-300 mb-3">Masukkan Password Admin untuk mengakses rekap data & rekapitulasi:</p>
+        <p class="text-xs text-slate-300 mb-3">Masukkan Password Admin:</p>
         <input type="password" id="adminPassInput" class="w-full p-3 bg-slate-900 border border-slate-700 rounded-xl text-sm mb-4 focus:outline-none focus:border-amber-400" placeholder="Masukkan Password Admin">
         <button onclick="loginAdmin()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2.5 rounded-xl text-sm transition">
           MASUK ADMIN
         </button>
       </div>
 
-      <!-- MODAL STATE 2: MENU DASHBOARD ADMIN -->
-      <div id="adminDashboard" class="hidden space-y-5">
-        <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
-          <p class="text-xs font-bold text-amber-400 uppercase mb-2">📥 Export Data Refleksi Umat</p>
-          <div class="grid grid-cols-2 gap-2">
-            <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-2.5 px-3 rounded-xl transition flex items-center justify-center gap-1">
-              📊 Export .XLSX (Excel)
+      <!-- MODAL STATE 2: DASHBOARD ADMIN DENGAN TAB -->
+      <div id="adminDashboard" class="hidden space-y-4">
+        <!-- HEADER TAB NAVIGATION -->
+        <div class="flex border-b border-slate-700 mb-4 text-xs font-bold">
+          <button onclick="switchTab('preview')" id="tabBtnPreview" class="py-2 px-4 border-b-2 border-amber-400 text-amber-400 flex-1 text-center">
+            📊 Preview Hasil (Locus)
+          </button>
+          <button onclick="switchTab('settings')" id="tabBtnSettings" class="py-2 px-4 border-b-2 border-transparent text-slate-400 flex-1 text-center">
+            ⚙️ Export & Setting
+          </button>
+        </div>
+
+        <!-- TAB CONTENT 1: PREVIEW HASIL INPUTAN SEMUA UMAT (PER LOCUS) -->
+        <div id="tabPreviewContent" class="space-y-4">
+          <div class="flex justify-between items-center bg-slate-900 p-3 rounded-xl border border-slate-700">
+            <span class="text-xs font-bold text-slate-300">Total Masuk: <span id="totalInputBadge" class="text-amber-400">0</span> Refleksi</span>
+            <button onclick="loadPreviewData()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 text-xs px-2.5 py-1 rounded-lg border border-slate-700">
+              🔄 Refresh
             </button>
-            <button onclick="exportToWord()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold py-2.5 px-3 rounded-xl transition flex items-center justify-center gap-1">
-              📄 Export .DOCX (Word)
-            </button>
+          </div>
+
+          <!-- GRID 4 LOCUS -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto pr-1">
+            <!-- LOCUS 1: KELUARGA -->
+            <div class="bg-slate-900/90 p-3 rounded-xl border border-sky-500/30">
+              <h4 class="text-xs font-extrabold text-sky-400 uppercase border-b border-sky-500/20 pb-1.5 mb-2">1. Dalam Keluarga</h4>
+              <div id="locusList1" class="space-y-2 text-xs text-slate-200">
+                <span class="text-slate-500 italic">Belum ada isian</span>
+              </div>
+            </div>
+
+            <!-- LOCUS 2: LINGKUNGAN -->
+            <div class="bg-slate-900/90 p-3 rounded-xl border border-emerald-500/30">
+              <h4 class="text-xs font-extrabold text-emerald-400 uppercase border-b border-emerald-500/20 pb-1.5 mb-2">2. Dalam Lingkungan</h4>
+              <div id="locusList2" class="space-y-2 text-xs text-slate-200">
+                <span class="text-slate-500 italic">Belum ada isian</span>
+              </div>
+            </div>
+
+            <!-- LOCUS 3: PAROKI -->
+            <div class="bg-slate-900/90 p-3 rounded-xl border border-purple-500/30">
+              <h4 class="text-xs font-extrabold text-purple-400 uppercase border-b border-purple-500/20 pb-1.5 mb-2">3. Dalam Paroki</h4>
+              <div id="locusList3" class="space-y-2 text-xs text-slate-200">
+                <span class="text-slate-500 italic">Belum ada isian</span>
+              </div>
+            </div>
+
+            <!-- LOCUS 4: MASYARAKAT -->
+            <div class="bg-slate-900/90 p-3 rounded-xl border border-amber-500/30">
+              <h4 class="text-xs font-extrabold text-amber-400 uppercase border-b border-amber-500/20 pb-1.5 mb-2">4. Dalam Masyarakat</h4>
+              <div id="locusList4" class="space-y-2 text-xs text-slate-200">
+                <span class="text-slate-500 italic">Belum ada isian</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
-          <p class="text-xs font-bold text-amber-400 uppercase mb-2">🔒 Ganti Password Admin</p>
-          <input type="password" id="newPassInput" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white mb-2 focus:outline-none focus:border-amber-400" placeholder="Masukkan Password Baru">
-          <button onclick="changeAdminPassword()" class="w-full bg-slate-700 hover:bg-slate-600 text-amber-300 font-bold py-2 rounded-xl text-xs transition">
-            SIMPAN PASSWORD BARU
-          </button>
+        <!-- TAB CONTENT 2: EXPORT & GANTI PASSWORD -->
+        <div id="tabSettingsContent" class="hidden space-y-4">
+          <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
+            <p class="text-xs font-bold text-amber-400 uppercase mb-2">📥 Export Data Refleksi Umat</p>
+            <div class="grid grid-cols-2 gap-2">
+              <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-2.5 px-3 rounded-xl transition flex items-center justify-center gap-1">
+                📊 Export .XLSX
+              </button>
+              <button onclick="exportToWord()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold py-2.5 px-3 rounded-xl transition flex items-center justify-center gap-1">
+                📄 Export .DOCX
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
+            <p class="text-xs font-bold text-amber-400 uppercase mb-2">🔒 Ganti Password Admin</p>
+            <input type="password" id="newPassInput" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white mb-2 focus:outline-none focus:border-amber-400" placeholder="Masukkan Password Baru">
+            <button onclick="changeAdminPassword()" class="w-full bg-slate-700 hover:bg-slate-600 text-amber-300 font-bold py-2 rounded-xl text-xs transition">
+              SIMPAN PASSWORD BARU
+            </button>
+          </div>
         </div>
       </div>
+
     </div>
   </div>
 
@@ -168,7 +227,6 @@
     let selectedLocus = "";
     let currentAdminPass = "125375";
 
-    // Inisialisasi Ambil Password Admin dari Database Supabase
     async function fetchAdminPass() {
       try {
         const { data } = await supabaseClient.from('admin_settings').select('admin_pass').eq('id', 1).single();
@@ -254,12 +312,17 @@
       document.getElementById('submitBtn').innerText = 'KIRIM REFLEKSI SAYA';
     }
 
-    /* LOGIKA ADMIN MODAL & EXPORT */
+    /* LOGIKA ADMIN MODAL, PREVIEW, & EXPORT */
     function openAdminModal() {
       document.getElementById('adminModal').classList.remove('hidden');
       document.getElementById('adminLoginForm').classList.remove('hidden');
       document.getElementById('adminDashboard').classList.add('hidden');
       document.getElementById('adminPassInput').value = '';
+      
+      // Ukuran standar modal login
+      const box = document.getElementById('adminModalBox');
+      box.classList.remove('max-w-3xl');
+      box.classList.add('max-w-md');
     }
 
     function closeAdminModal() {
@@ -271,8 +334,82 @@
       if (inputPass === currentAdminPass) {
         document.getElementById('adminLoginForm').classList.add('hidden');
         document.getElementById('adminDashboard').classList.remove('hidden');
+        
+        // Perlebar ukuran modal saat masuk dashboard agar preview nyaman dibaca
+        const box = document.getElementById('adminModalBox');
+        box.classList.remove('max-w-md');
+        box.classList.add('max-w-3xl');
+
+        // Muat data preview
+        loadPreviewData();
       } else {
         alert("Password Admin Salah!");
+      }
+    }
+
+    function switchTab(tabName) {
+      const tabPreview = document.getElementById('tabPreviewContent');
+      const tabSettings = document.getElementById('tabSettingsContent');
+      const btnPreview = document.getElementById('tabBtnPreview');
+      const btnSettings = document.getElementById('tabBtnSettings');
+
+      if (tabName === 'preview') {
+        tabPreview.classList.remove('hidden');
+        tabSettings.classList.add('hidden');
+        btnPreview.classList.add('border-amber-400', 'text-amber-400');
+        btnPreview.classList.remove('border-transparent', 'text-slate-400');
+        btnSettings.classList.remove('border-amber-400', 'text-amber-400');
+        btnSettings.classList.add('border-transparent', 'text-slate-400');
+      } else {
+        tabPreview.classList.add('hidden');
+        tabSettings.classList.remove('hidden');
+        btnSettings.classList.add('border-amber-400', 'text-amber-400');
+        btnSettings.classList.remove('border-transparent', 'text-slate-400');
+        btnPreview.classList.remove('border-amber-400', 'text-amber-400');
+        btnPreview.classList.add('border-transparent', 'text-slate-400');
+      }
+    }
+
+    /* FUNGSI LOAD PREVIEW TANPA NAMA PENGINPUT */
+    async function loadPreviewData() {
+      const { data, error } = await supabaseClient
+        .from('refleksi_bksn_halaman36')
+        .select('*')
+        .order('id', { ascending: true });
+
+      if (error) {
+        console.error("Gagal memuat preview:", error);
+        return;
+      }
+
+      document.getElementById('totalInputBadge').innerText = data ? data.length : 0;
+
+      // Bersihkan isi container preview
+      for (let i = 1; i <= 4; i++) {
+        document.getElementById(`locusList${i}`).innerHTML = '<span class="text-slate-500 italic">Belum ada isian</span>';
+      }
+
+      if (!data || data.length === 0) return;
+
+      // Kelompokkan data berdasarkan nomor kelompok (1-4)
+      const grouped = { 1: [], 2: [], 3: [], 4: [] };
+      data.forEach(item => {
+        if (grouped[item.kelompok_no]) {
+          grouped[item.kelompok_no].push(item.isi_refleksi);
+        }
+      });
+
+      // Render setiap kelompok tanpa menampilkan nama penginput
+      for (let i = 1; i <= 4; i++) {
+        const listElem = document.getElementById(`locusList${i}`);
+        if (grouped[i].length > 0) {
+          listElem.innerHTML = grouped[i].map(teks => `
+            <div class="bg-slate-800/90 p-2.5 rounded-lg border border-slate-700/60 flex items-start gap-2">
+              <span class="text-amber-400 font-bold">•</span>
+              <span class="leading-relaxed flex-1">${teks}</span>
+            </div>
+          `).join('');
+        }
       }
     }
 
@@ -338,7 +475,7 @@
         <head><meta charset="utf-8"></head>
         <body style="font-family:Arial, sans-serif;">
           <h2 style="text-align:center;">REKAP REFLEKSI BKSN 2026 — HALAMAN 36</h2>
-          <p style="text-align:center; font-size:12px;">Lingkungan St. Sisilia Babadan</p>
+          <p style="text-align:center; font-size:12px;">Lingkungan St. Sisilia</p>
           <hr/>
           <table style="width:100%; border-collapse:collapse; font-size:11px; margin-top:15px;">
             <thead>
