@@ -150,7 +150,7 @@
           </button>
         </div>
 
-        <!-- TAB CONTENT 1: PREVIEW HASIL INPUTAN SEMUA UMAT (PER LOCUS) -->
+        <!-- TAB CONTENT 1: PREVIEW HASIL INPUTAN SEMUA UMAT -->
         <div id="tabPreviewContent" class="space-y-4">
           <div class="flex justify-between items-center bg-slate-900 p-3 rounded-xl border border-slate-700">
             <span class="text-xs font-bold text-slate-300">Total Masuk: <span id="totalInputBadge" class="text-amber-400">0</span> Refleksi</span>
@@ -161,7 +161,6 @@
 
           <!-- GRID 4 LOCUS -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto pr-1">
-            <!-- LOCUS 1: KELUARGA -->
             <div class="bg-slate-900/90 p-3 rounded-xl border border-sky-500/30">
               <h4 class="text-xs font-extrabold text-sky-400 uppercase border-b border-sky-500/20 pb-1.5 mb-2">1. Dalam Keluarga</h4>
               <div id="locusList1" class="space-y-2 text-xs text-slate-200">
@@ -169,7 +168,6 @@
               </div>
             </div>
 
-            <!-- LOCUS 2: LINGKUNGAN -->
             <div class="bg-slate-900/90 p-3 rounded-xl border border-emerald-500/30">
               <h4 class="text-xs font-extrabold text-emerald-400 uppercase border-b border-emerald-500/20 pb-1.5 mb-2">2. Dalam Lingkungan</h4>
               <div id="locusList2" class="space-y-2 text-xs text-slate-200">
@@ -177,7 +175,6 @@
               </div>
             </div>
 
-            <!-- LOCUS 3: PAROKI -->
             <div class="bg-slate-900/90 p-3 rounded-xl border border-purple-500/30">
               <h4 class="text-xs font-extrabold text-purple-400 uppercase border-b border-purple-500/20 pb-1.5 mb-2">3. Dalam Paroki</h4>
               <div id="locusList3" class="space-y-2 text-xs text-slate-200">
@@ -185,7 +182,6 @@
               </div>
             </div>
 
-            <!-- LOCUS 4: MASYARAKAT -->
             <div class="bg-slate-900/90 p-3 rounded-xl border border-amber-500/30">
               <h4 class="text-xs font-extrabold text-amber-400 uppercase border-b border-amber-500/20 pb-1.5 mb-2">4. Dalam Masyarakat</h4>
               <div id="locusList4" class="space-y-2 text-xs text-slate-200">
@@ -195,8 +191,9 @@
           </div>
         </div>
 
-        <!-- TAB CONTENT 2: EXPORT & GANTI PASSWORD -->
+        <!-- TAB CONTENT 2: EXPORT, HAPUS DATA & GANTI PASSWORD -->
         <div id="tabSettingsContent" class="hidden space-y-4">
+          <!-- EXPORT DATA -->
           <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
             <p class="text-xs font-bold text-amber-400 uppercase mb-2">📥 Export Data Refleksi Umat</p>
             <div class="grid grid-cols-2 gap-2">
@@ -209,6 +206,16 @@
             </div>
           </div>
 
+          <!-- MANAJEMEN DATA (HAPUS SEMUA RECORD) -->
+          <div class="bg-rose-950/30 p-4 rounded-xl border border-rose-500/40">
+            <p class="text-xs font-bold text-rose-400 uppercase mb-1">🗑️ Reset / Hapus Data Refleksi</p>
+            <p class="text-[11px] text-slate-400 mb-3">Tindakan ini akan menghapus seluruh isi data refleksi dari database secara permanen.</p>
+            <button onclick="clearAllData()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-2.5 rounded-xl text-xs transition">
+              KOSONGKAN SEMUA RECORD DATA
+            </button>
+          </div>
+
+          <!-- GANTI PASSWORD -->
           <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
             <p class="text-xs font-bold text-amber-400 uppercase mb-2">🔒 Ganti Password Admin</p>
             <input type="password" id="newPassInput" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white mb-2 focus:outline-none focus:border-amber-400" placeholder="Masukkan Password Baru">
@@ -312,14 +319,13 @@
       document.getElementById('submitBtn').innerText = 'KIRIM REFLEKSI SAYA';
     }
 
-    /* LOGIKA ADMIN MODAL, PREVIEW, & EXPORT */
+    /* LOGIKA ADMIN MODAL, PREVIEW, EXPORT & DELETE */
     function openAdminModal() {
       document.getElementById('adminModal').classList.remove('hidden');
       document.getElementById('adminLoginForm').classList.remove('hidden');
       document.getElementById('adminDashboard').classList.add('hidden');
       document.getElementById('adminPassInput').value = '';
       
-      // Ukuran standar modal login
       const box = document.getElementById('adminModalBox');
       box.classList.remove('max-w-3xl');
       box.classList.add('max-w-md');
@@ -335,12 +341,10 @@
         document.getElementById('adminLoginForm').classList.add('hidden');
         document.getElementById('adminDashboard').classList.remove('hidden');
         
-        // Perlebar ukuran modal saat masuk dashboard agar preview nyaman dibaca
         const box = document.getElementById('adminModalBox');
         box.classList.remove('max-w-md');
         box.classList.add('max-w-3xl');
 
-        // Muat data preview
         loadPreviewData();
       } else {
         alert("Password Admin Salah!");
@@ -370,7 +374,6 @@
       }
     }
 
-    /* FUNGSI LOAD PREVIEW TANPA NAMA PENGINPUT */
     async function loadPreviewData() {
       const { data, error } = await supabaseClient
         .from('refleksi_bksn_halaman36')
@@ -384,14 +387,12 @@
 
       document.getElementById('totalInputBadge').innerText = data ? data.length : 0;
 
-      // Bersihkan isi container preview
       for (let i = 1; i <= 4; i++) {
         document.getElementById(`locusList${i}`).innerHTML = '<span class="text-slate-500 italic">Belum ada isian</span>';
       }
 
       if (!data || data.length === 0) return;
 
-      // Kelompokkan data berdasarkan nomor kelompok (1-4)
       const grouped = { 1: [], 2: [], 3: [], 4: [] };
       data.forEach(item => {
         if (grouped[item.kelompok_no]) {
@@ -399,7 +400,6 @@
         }
       });
 
-      // Render setiap kelompok tanpa menampilkan nama penginput
       for (let i = 1; i <= 4; i++) {
         const listElem = document.getElementById(`locusList${i}`);
         if (grouped[i].length > 0) {
@@ -410,6 +410,33 @@
             </div>
           `).join('');
         }
+      }
+    }
+
+    /* FUNGSI HAPUS / KOSONGKAN SELURUH DATA RECORD */
+    async function clearAllData() {
+      const confirmFirst = confirm("Apakah Anda yakin ingin menghapus SELURUH record data refleksi umat?");
+      if (!confirmFirst) return;
+
+      const confirmSecond = confirm("PERINGATAN TERAKHIR: Seluruh data refleksi akan terhapus permanen dari database dan tidak dapat dikembalikan. Lanjutkan?");
+      if (!confirmSecond) return;
+
+      try {
+        // Menghapus seluruh baris data di mana ID lebih besar dari 0
+        const { error } = await supabaseClient
+          .from('refleksi_bksn_halaman36')
+          .delete()
+          .gt('id', 0);
+
+        if (error) {
+          alert("Gagal menghapus data: " + error.message);
+        } else {
+          alert("Seluruh record data refleksi berhasil dikosongkan!");
+          loadPreviewData();
+          switchTab('preview');
+        }
+      } catch (err) {
+        alert("Terjadi kesalahan: " + err.message);
       }
     }
 
